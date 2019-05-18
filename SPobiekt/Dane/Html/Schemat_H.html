@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Schemat H</title>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1250">
+</head>
+
+<body>
+<table width="300" border="0" align="center" cellpadding="0" cellspacing="0">
+  <!--DWLayoutTable-->
+  <tr> 
+    <td width="300" height="200" valign="top"><p><strong>Schemat H <br>Skrzyżowanie z lewoskrętem</strong></p>
+      <p><img src="Schemat_H.jpg" width="300" height="295"></p>
+      <p>&nbsp;</p>
+      </td>
+  </tr>
+  <tr>
+    <td height="300" valign="top"><div align="left"> 
+        <p>Obiekt ten przedstawia rozbudowane skrzyżowanie czterech kierunków ruchu, z wydzielonymi lewoskrętami.
+		
+		<br>
+		<br>
+		Światła dla kierunku jazdy w prawo sterowane są za pomocą <b>Z1</b>(JAZDA PROSTO) i <b>Z2</b>(JAZDA W LEWO) (0 - czerwone), dla kierunku jazdy w dół <b>Z3</b>(JAZDA PROSTO) i <b>Z4</b>(JAZDA W LEWO) (0 - czerwone)
+          1 - zielone), dla kierunku jazdy w lewo <b>Z5</b>(JAZDA PROSTO) i <b>Z6</b>(JAZDA W LEWO) (0 - czerwone)
+          1 - zielone) i dla kierunku jazdy w górę <b>Z7</b>(JAZDA PROSTO) i <b>Z8</b>(JAZDA W LEWO) (0 - czerwone)
+          1 - zielone).<br>
+		  Na trasie umieszczone są czujniki ruchu: 
+          <b>X1</b> (dla pojazdów jadących w prawo), <b>X2</b> 
+          (dla pojazdów jadących w prawo i skręcających), 
+		  <b>X3</b> (dla pojazdów jadących w dół), <b>X4</b> 
+          (dla pojazdów jadących w dół i skręcających),
+		  <b>X5</b> (dla pojazdów jadących w lewo), <b>X6</b> 
+          (dla pojazdów jadących w lewo i skręcających),
+		  <b>X7</b> (dla pojazdów jadących w górę), <b>X8</b> 
+          (dla pojazdów jadących w górę i skręcających),
+		  <B>X9, X10, X11, X12</b> dla pojazdów wyjeżdżających ze skrzyżowania.
+		  Umieszczone zostały również czujniki <b>X13</b> dla pojazdów dojeżdżających
+		  do skrzyżowania z lewej strony, <b>X14</b> dla pojazdów dojeżdżających z prawej,
+		  <b>X15</b> dla pojazdów skręcających w górę, oraz <b>X16</b> dla pojazdów skręcających w dół.</p>
+		  <p>Dodatkowo, możliwe jest sterowanie obciążeniem poszczególnych pasów. Wykorzystując poszczególne pary klawiszy, można zwiększać bądź zmniejszać obciążenie. Rozkład klawiszy wygląda następująco:<br>
+		  <b>Q/A</b> (dla pojazdów jadących w prawo),<br>
+		  <b>W/S</b> (dla pojazdów jadących w prawo i skręcających),<br>
+		  <b>E/D</b> (dla pojazdów jadących w dół),<br>
+		  <b>R/F</b> (dla pojazdów jadących w dół i skręcających),<br>
+		  <b>T/G</b> (dla pojazdów jadących w lewo),<br>
+		  <b>Y/H</b> (dla pojazdów jadących w lewo i skręcających),<br>
+		  <b>U/J</b> (dla pojazdów jadących w górę),<br>
+		  <b>I/K</b> (dla pojazdów jadących w górę i skręcających).
+		  </p>
+        <p><b>Ramka danych wyjściowych (stan obiektu).</b></p>
+        <table width="130" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr> 
+            <td width="30"><div align="center">X1</div></td>
+            <td width="30"><div align="center">X...</div></td>
+            <td width="30"><div align="center">X...</div></td>
+            <td width="30"><div align="center">X16</div></td>
+          </tr>
+          <tr> 
+            <td><div align="center">0</div></td>
+            <td colspan="2"><div align="center">...</div></td>
+            <td><div align="center">15</div></td>
+          </tr>
+        </table>
+        <p><b>Ramka danych wejściowych (sterujących).</b></p>
+        <table width="130" border="1" align="center" cellpadding="0" cellspacing="0">
+          <tr> 
+            <td width="30"><div align="center">Z1</div></td>
+            <td width="30"><div align="center">Z...</div></td>
+            <td width="30"><div align="center">Z...</div></td>
+            <td width="30"><div align="center">Z8</div></td>
+          </tr>
+          <tr> 
+            <td><div align="center">0</div></td>
+            <td colspan="2"><div align="center">...</div></td>
+            <td><div align="center">7</div></td>
+          </tr>
+        </table>
+        <p><b>Sterowanie klawiaturą.</b><br>
+          1 - Z1 (jazda w prawo)<br>
+          2 - Z2 (jazda w prawo - góra)<br>
+		  3 - Z3 (jazda w dół)<br>
+          4 - Z4 (jazda w dół - prawo)<br>
+		  5 - Z5 (jazda w lewo)<br>
+          6 - Z6 (jazda w lewo - dół)<br>
+		  7 - Z7 (jazda w górę)<br>
+          8 - Z8 (jazda w górę - lewo)<br><br>
+		  Q/A - zwiększ./zmniejsz. obciążenie dla pasa w prawo<br>
+		  W/S - zwiększ./zmniejsz. obciążenie dla pasa prawo-góra<br>
+		  E/D - zwiększ./zmniejsz. obciążenie dla pasa w dół<br>
+		  R/F - zwiększ./zmniejsz. obciążenie dla pasa w dół-prawo<br>
+		  T/G - zwiększ./zmniejsz. obciążenie dla pasa lewo<br>
+		  Y/H - zwiększ./zmniejsz. obciążenie dla pasa w lewo-dół<br>
+		  U/J - zwiększ./zmniejsz. obciążenie dla pasa w górę<br>
+		  I/K - zwiększ./zmniejsz. obciążenie dla pasa w górę-lewo
+		  </p>
+        </div></td>
+  </tr>
+</table>
+</body>
+</html>

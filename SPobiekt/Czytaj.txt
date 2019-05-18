@@ -1,0 +1,26 @@
+Sposób korzystania z programu SPobiekt
+1. Zainstalowaæ oprogramowanie Symulator Obiektów (wraz z poprawk¹) dostêpne na stronie internetowej.
+2. Uruchomiæ projekt SPobiekt.sln.
+3. Wprowadziæ stosowne zmiany w kodzie Ÿród³owym, skompilowaæ (Build) i zwin¹æ do paska zadañ.
+4. Uruchomiæ Symulator Obiektów, wybraæ w³aœciwy obiekt, nacisn¹æ Start i zwin¹æ do paska zadañ.
+5. Wróciæ do Visual Studio i uruchomiæ projekt (Execute).
+6. W zale¿noœci od potrzeby prze³¹czaæ siê pomiêdzy SPobiekt i Symulatorem Obiektów.
+
+Uwaga!
+Uruchomienie projektu SPobiekt w Visual Studio (Execute) mo¿e byæ wykonane dopiero po aktywacji przycisku Start w Symulatorze Obiektów, w przeciwnym razie nie bêdzie dzia³aæ komunikacja pomiêdzy aplikacjami. Nale¿y tak¿e unikaæ przesuwania okien obu aplikacji w trakcie symulacji, gdy¿ grozi to zerwaniem komunikacji pomiêdzy aplikacjami.
+
+Konfiguracja SPobiekt
+1. Plik WorkObiekt.cpp
+Wybór oznaczeñ w³aœciwych dla obiektu sterowania (A…H) realizowany jest przez do³¹czenie odpowiedniego pliku SchematX.h za pomoc¹ dyrektywy #include. W katalogu projektu dostêpne s¹ pliki z oznaczeniami dla obiektów A…H. 
+#include "SchematA.h"	// Definicje wejœæ i wyjœæ obiektu A
+
+2. Plik WorkObiekt.h
+int  wCykl=500;		// Czas cyklu dla funkcji oblicz(), np. 500[ms]
+char tIntr=4;		// Interwa³ czasu pomiêdzy przerwaniami od T0 [ms]
+char typPanelu=1;	// Typ panelu: 0=>SP-841, 1=>SP-AVR
+char fTekstury=0;	// Czy rysowaæ tekstury? (1=Tak, 0=Nie)
+char fTablWart=0;	// Czy rysowaæ tablicê wart.? (1=Tak, 0=Nie)
+char fWykresy=0;	// Czy rysowaæ wykresy? (1=Tak, 0=Nie)
+
+3. Plik Zadania.h
+Plik Zadania.h przeznaczony jest na zadania (funkcje) u¿ytkownika. Standardowo jest tam umieszczona funkcja umo¿liwiaj¹ca sprawdzenie poprawnoœci dzia³ania obiektu A.
