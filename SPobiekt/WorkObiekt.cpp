@@ -5,11 +5,19 @@
 #include "SchematG.h"				// Definicje wejœæ i wyjœæ obiektu A
 #include "Zadania.h"				// Zadania u¿ytkownika
 
-char tim, stan = 1;
-char T_standard = 15, T_break = 10, T_fast = 5, T_unload = 20, T_twoCar = 10;;
-char option=1;
+char tim, stan = 1, tim2;
+char T_standard = 15, T_break = 10, T_fast = 5, T_unload = 20, T_twoCar = 10, T_nextcar = 8;
+char option = 1;
 int car_count = 0;
 int i = 2, j = 2, k = 2;
+int cars[8] = { 0,0,0,0,0,0,0,0 };
+
+char aX1 = 0, aX2 = 0, aX3 = 0, aX4 = 0, aX5 = 0, aX6 = 0, aX7 = 0, aX8 = 0, aX9 = 0, aX10 = 0, aX11 = 0, aX12 = 0, aX13 = 0, aX14 = 0, aX15 = 0, aX16 = 0;
+char pX1, pX2, pX3, pX4, pX5, pX6, pX7, pX8, pX9, pX10, pX11, pX12, pX13, pX14, pX15, pX16;
+int ile_na_skrz = 0;
+void Set_Sensor();
+void Auto_Counting();
+
 void inicjuj(void)					// Inicjowanie programu (jednorazowo przy starcie)
 {
 }
@@ -28,7 +36,7 @@ void AutoDriveOptionOne()
 		if (!tim && (X3 | X7)) { tim = T_standard; stan = 4; } // x3 i x7
 		break;
 	case 4: Z1 = 0; Z2 = 0; Z3 = 1; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 1; Z8 = 0;
-		if (!tim) {	stan = 5; tim = T_break;	} // przerwa 
+		if (!tim) { stan = 5; tim = T_break; } // przerwa 
 		break;
 	case 5: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
 		if (!tim && (X2 || X6)) { tim = T_standard; stan = 6; } // x2 i x6
@@ -86,7 +94,7 @@ void AutoDriveOptionTwo()
 void AutoDriveOptionFast()
 {
 	switch (stan)
-	{ 
+	{
 	case 1: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
 		if (!tim && ((X1 && X13) || (X5 && X14)) && i) { tim = T_unload; stan = 2; i--; }		// x1 i x5 rozladunek
 		else if (!tim && ((X2 && X15) || (X6 && X16)) && i) { tim = T_unload; stan = 3; i--; }	// x2 i x6 rozladunek
@@ -106,14 +114,14 @@ void AutoDriveOptionFast()
 		if (!tim && ((X2 && X15) || (X6 && X16)) && i) { tim = T_unload; stan = 3; i--; }
 		else if (!tim && (X3 || X7) && j) { tim = T_standard; stan = 7; j--; }
 		else if (!tim && (X4 || X8) && j) { tim = T_standard; stan = 6; j--; }
-		else if (!tim) { stan = 1; j = i = k= 2; }
+		else if (!tim) { stan = 1; j = i = k = 2; }
 		break;
 		//PRZERWA 
 	case 5: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
 		if (!tim && ((X1 && X12) || (X5 && X14)) && i) { tim = T_unload; stan = 2; i--; }
 		else if (!tim && (X3 || X7) && j) { tim = T_standard; stan = 7; j--; }
 		else if (!tim && (X4 || X8) && j) { tim = T_standard; stan = 6; j--; }
-		else if (!tim) { stan = 1; j = i = k= 2; }
+		else if (!tim) { stan = 1; j = i = k = 2; }
 		break;
 		// z4 i z8
 	case 6: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 1; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 1;
@@ -153,7 +161,7 @@ void AutoDriveOptionFast()
 		break;
 		// x1 i x5 DWA AUTA
 	case 13: Z1 = 1; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 1; Z6 = 0; Z7 = 0; Z8 = 0;
-		if(!tim) { tim = T_break; stan = 15; }
+		if (!tim) { tim = T_break; stan = 15; }
 		break;
 		// x2 i x6 DWA AUTA
 	case 14: Z1 = 0; Z2 = 1; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 1; Z7 = 0; Z8 = 0;
@@ -173,16 +181,307 @@ void AutoDriveOptionFast()
 	if (tim) --tim;
 }
 
+void AutoAdaptiveOption()
+{
+	switch (stan)
+	{
+	case 1: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
+		if (X1 && X5) { stan = 2; tim = T_standard; tim2 = T_nextcar; cars[0] = 1; cars[4] = 1; }
+		else if (X1 && !X5 && X2) { stan = 3; tim = T_standard; tim2 = T_nextcar; cars[0] = 1; cars[1] = 1; }
+		else if (X5 && !X1 && X6) { stan = 4; tim = T_standard; tim2 = T_nextcar; cars[4] = 1; cars[5] = 1; }
+		else if (X3 && X7) { stan = 5; tim = T_standard; tim2 = T_nextcar; cars[2] = 1; cars[6] = 1; }
+		else if (X3 && !X7 && X4) { stan = 6; tim = T_standard; tim2 = T_nextcar; cars[2] = 1; cars[3] = 1; }
+		else if (X7 && !X3 && X8) { stan = 7; tim = T_standard; tim2 = T_nextcar; cars[6] = 1; cars[7] = 1; }
+		else if (X2 && X6) { stan = 8; tim = T_standard; tim2 = T_nextcar; cars[1] = 1; cars[5] = 1; }
+		else if (X4 && X8) { stan = 9; tim = T_standard; tim2 = T_nextcar; cars[3] = 1; cars[7] = 1; }
+		else if (X1 && !cars[0]) { stan = 2; tim = T_standard; tim2 = T_nextcar; cars[0] = 1; }
+		else if (X2 && !cars[1]) { stan = 8; tim = T_standard; tim2 = T_nextcar; cars[1] = 1; }
+		else if (X3 && !cars[2]) { stan = 5; tim = T_standard; tim2 = T_nextcar; cars[2] = 1; }
+		else if (X4 && !cars[3]) { stan = 9; tim = T_standard; tim2 = T_nextcar; cars[3] = 1; }
+		else if (X5 && !cars[4]) { stan = 2; tim = T_standard; tim2 = T_nextcar; cars[4] = 1; }
+		else if (X6 && !cars[5]) { stan = 4; tim = T_standard; tim2 = T_nextcar; cars[5] = 1; }
+		else if (X7 && !cars[6]) { stan = 5; tim = T_standard; tim2 = T_nextcar; cars[6] = 1; }
+		else if (X8 && !cars[7]) { stan = 9; tim = T_standard; tim2 = T_nextcar; cars[7] = 1; }
+		break;
+	case 2:Z1 = 1; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 1; Z6 = 0; Z7 = 0; Z8 = 0;
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X1 && !X5) { stan = 10; tim = T_break; }
+		if (!tim2 && (X1 || X5)) { tim2 = T_nextcar; }
+		break;
+	case 3:Z1 = 1; Z2 = 1; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X1 && !X2) { stan = 10; tim = T_break; }
+		if (!tim2 && (X1 || X2)) { tim2 = T_nextcar; }
+		break;
+	case 4:Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 1; Z6 = 1; Z7 = 0; Z8 = 0;
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X6 && !X5) { stan = 10; tim = T_break; }
+		if (!tim2 && (X6 || X5)) { tim2 = T_nextcar; }
+		break;
+	case 5:Z1 = 0; Z2 = 0; Z3 = 1; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 1; Z8 = 0;
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X3 && !X7) { stan = 10; tim = T_break; }
+		if (!tim2 && (X3 || X7)) { tim2 = T_nextcar; }
+		break;
+	case 6:Z1 = 0; Z2 = 0; Z3 = 1; Z4 = 1; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X3 && !X4) { stan = 10; tim = T_break; }
+		if (!tim2 && (X3 || X4)) { tim2 = T_nextcar; }
+		break;
+	case 7:Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 1; Z8 = 1;
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X7 && !X8) { stan = 10; tim = T_break; }
+		if (!tim2 && (X7 || X8)) { tim2 = T_nextcar; }
+		break;
+	case 8:Z1 = 0; Z2 = 1; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 1; Z7 = 0; Z8 = 0;
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X2 && !X6) { stan = 10; tim = T_break; }
+		if (!tim2 && (X6 || X2)) { tim2 = T_nextcar; }
+		break;
+	case 9:Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 1; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 1;
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X4 && !X8) { stan = 10; tim = T_break; }
+		if (!tim2 && (X4 || X8)) { tim2 = T_nextcar; }
+		break;
+	case 10: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
+		if (!tim && X1 && X5 && !cars[0] && !cars[4])
+		{
+			stan = 2; tim = T_standard; tim2 = T_nextcar; cars[0] = 1; cars[4] = 1;
+		}
+		else if (!tim && X1 && !X5 && X2 && !cars[0] && !cars[1])
+		{
+			stan = 3; tim = T_standard; tim2 = T_nextcar; cars[0] = 1; cars[1] = 1;
+		}
+		else if (!tim && X5 && !X1 && X6 && !cars[4] && !cars[5])
+		{
+			stan = 4; tim = T_standard; tim2 = T_nextcar; cars[4] = 1; cars[5] = 1;
+		}
+		else if (!tim && X3 && X7 && !cars[2] && !cars[6])
+		{
+			stan = 5; tim = T_standard; tim2 = T_nextcar; cars[2] = 1; cars[6] = 1;
+		}
+		else if (!tim && X3 && !X7 && X4 && !cars[2] && !cars[3])
+		{
+			stan = 6; tim = T_standard; tim2 = T_nextcar; cars[2] = 1; cars[3] = 1;
+		}
+		else if (!tim && X7 && !X3 && X8 && !cars[6] && !cars[7])
+		{
+			stan = 7; tim = T_standard; tim2 = T_nextcar; cars[6] = 1; cars[7] = 1;
+		}
+		else if (!tim && X2 && X6 && !cars[1] && !cars[5])
+		{
+			stan = 8; tim = T_standard; tim2 = T_nextcar; cars[1] = 1; cars[5] = 1;
+		}
+		else if (!tim && (X4 && X8) && !cars[3] && !cars[7])
+		{
+			stan = 9; tim = T_standard; tim2 = T_nextcar; cars[3] = 1; cars[7] = 1;
+		}
+		else if (!tim && X1 && !cars[0]) { stan = 2; tim = T_standard; tim2 = T_nextcar; cars[0] = 1; }
+		else if (!tim && X2 && !cars[1]) { stan = 3; tim = T_standard; tim2 = T_nextcar; cars[1] = 1; }
+		else if (!tim && X3 && !cars[2]) { stan = 5; tim = T_standard; tim2 = T_nextcar; cars[2] = 1; }
+		else if (!tim && X4 && !cars[3]) { stan = 6; tim = T_standard; tim2 = T_nextcar; cars[3] = 1; }
+		else if (!tim && X5 && !cars[4]) { stan = 2; tim = T_standard; tim2 = T_nextcar; cars[4] = 1; }
+		else if (!tim && X6 && !cars[5]) { stan = 4; tim = T_standard; tim2 = T_nextcar; cars[5] = 1; }
+		else if (!tim && X7 && !cars[6]) { stan = 5; tim = T_standard; tim2 = T_nextcar; cars[6] = 1; }
+		else if (!tim && X8 && !cars[7]) { stan = 6; tim = T_standard; tim2 = T_nextcar; cars[7] = 1; }
+		else if (!tim) { stan = 1; for (int i = 0; i < 8; i++) cars[i] = 0; }
+		break;
+	}
+	if (tim) --tim;
+	if (tim2)--tim2;
+}
+
+void AutoAdaptiveOptionCounting()
+{
+	Set_Sensor();
+	switch (stan)
+	{
+	case 1: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
+		Auto_Counting();
+		if (X1 && X5) { stan = 2; tim = T_standard; tim2 = T_nextcar; cars[0] = 1; cars[4] = 1; }
+		else if (X1 && !X5 && X2) { stan = 3; tim = T_standard; tim2 = T_nextcar; cars[0] = 1; cars[1] = 1; }
+		else if (X5 && !X1 && X6) { stan = 4; tim = T_standard; tim2 = T_nextcar; cars[4] = 1; cars[5] = 1; }
+		else if (X3 && X7) { stan = 5; tim = T_standard; tim2 = T_nextcar; cars[2] = 1; cars[6] = 1; }
+		else if (X3 && !X7 && X4) { stan = 6; tim = T_standard; tim2 = T_nextcar; cars[2] = 1; cars[3] = 1; }
+		else if (X7 && !X3 && X8) { stan = 7; tim = T_standard; tim2 = T_nextcar; cars[6] = 1; cars[7] = 1; }
+		else if (X2 && X6) { stan = 8; tim = T_standard; tim2 = T_nextcar; cars[1] = 1; cars[5] = 1; }
+		else if (X4 && X8) { stan = 9; tim = T_standard; tim2 = T_nextcar; cars[3] = 1; cars[7] = 1; }
+		else if (X1 && !cars[0]) { stan = 2; tim = T_standard; tim2 = T_nextcar; cars[0] = 1; }
+		else if (X2 && !cars[1]) { stan = 8; tim = T_standard; tim2 = T_nextcar; cars[1] = 1; }
+		else if (X3 && !cars[2]) { stan = 5; tim = T_standard; tim2 = T_nextcar; cars[2] = 1; }
+		else if (X4 && !cars[3]) { stan = 9; tim = T_standard; tim2 = T_nextcar; cars[3] = 1; }
+		else if (X5 && !cars[4]) { stan = 2; tim = T_standard; tim2 = T_nextcar; cars[4] = 1; }
+		else if (X6 && !cars[5]) { stan = 4; tim = T_standard; tim2 = T_nextcar; cars[5] = 1; }
+		else if (X7 && !cars[6]) { stan = 5; tim = T_standard; tim2 = T_nextcar; cars[6] = 1; }
+		else if (X8 && !cars[7]) { stan = 9; tim = T_standard; tim2 = T_nextcar; cars[7] = 1; }
+		break;
+	case 2:Z1 = 1; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 1; Z6 = 0; Z7 = 0; Z8 = 0;
+		Auto_Counting();
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X1 && !X5) { stan = 10; tim = T_break; }
+		if (!tim2 && (X1 || X5)) { tim2 = T_nextcar; }
+		break;
+	case 3:Z1 = 1; Z2 = 1; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
+		Auto_Counting();
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X1 && !X2) { stan = 10; tim = T_break; }
+		if (!tim2 && (X1 || X2)) { tim2 = T_nextcar; }
+		break;
+	case 4:Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 1; Z6 = 1; Z7 = 0; Z8 = 0;
+		Auto_Counting();
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X6 && !X5) { stan = 10; tim = T_break; }
+		if (!tim2 && (X6 || X5)) { tim2 = T_nextcar; }
+		break;
+	case 5:Z1 = 0; Z2 = 0; Z3 = 1; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 1; Z8 = 0;
+		Auto_Counting();
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X3 && !X7) { stan = 10; tim = T_break; }
+		if (!tim2 && (X3 || X7)) { tim2 = T_nextcar; }
+		break;
+	case 6:Z1 = 0; Z2 = 0; Z3 = 1; Z4 = 1; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
+		Auto_Counting();
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X3 && !X4) { stan = 10; tim = T_break; }
+		if (!tim2 && (X3 || X4)) { tim2 = T_nextcar; }
+		break;
+	case 7:Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 1; Z8 = 1;
+		Auto_Counting();
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X7 && !X8) { stan = 10; tim = T_break; }
+		if (!tim2 && (X7 || X8)) { tim2 = T_nextcar; }
+		break;
+	case 8:Z1 = 0; Z2 = 1; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 1; Z7 = 0; Z8 = 0;
+		Auto_Counting();
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X2 && !X6) { stan = 10; tim = T_break; }
+		if (!tim2 && (X6 || X2)) { tim2 = T_nextcar; }
+		break;
+	case 9:Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 1; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 1;
+		Auto_Counting();
+		if (!tim) { tim = T_break; stan = 10; }
+		if (!tim2 && !X4 && !X8) { stan = 10; tim = T_break; }
+		if (!tim2 && (X4 || X8)) { tim2 = T_nextcar; }
+		break;
+	case 10: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
+		Auto_Counting();
+		if (!ile_na_skrz && X1 && X5 && !cars[0] && !cars[4])
+		{
+			stan = 2; tim = T_standard; tim2 = T_nextcar; cars[0] = 1; cars[4] = 1;
+		}
+		else if (!ile_na_skrz && X1 && !X5 && X2 && !cars[0] && !cars[1])
+		{
+			stan = 3; tim = T_standard; tim2 = T_nextcar; cars[0] = 1; cars[1] = 1;
+		}
+		else if (!ile_na_skrz && X5 && !X1 && X6 && !cars[4] && !cars[5])
+		{
+			stan = 4; tim = T_standard; tim2 = T_nextcar; cars[4] = 1; cars[5] = 1;
+		}
+		else if (!ile_na_skrz && X3 && X7 && !cars[2] && !cars[6])
+		{
+			stan = 5; tim = T_standard; tim2 = T_nextcar; cars[0] = 2; cars[6] = 1;
+		}
+		else if (!ile_na_skrz && X3 && !X7 && X4 && !cars[2] && !cars[3])
+		{
+			stan = 6; tim = T_standard; tim2 = T_nextcar; cars[2] = 1; cars[3] = 1;
+		}
+		else if (!ile_na_skrz && X7 && !X3 && X8 && !cars[6] && !cars[7])
+		{
+			stan = 7; tim = T_standard; tim2 = T_nextcar; cars[6] = 1; cars[7] = 1;
+		}
+		else if (!ile_na_skrz && X2 && X6 && !cars[1] && !cars[5])
+		{
+			stan = 8; tim = T_standard; tim2 = T_nextcar; cars[1] = 1; cars[5] = 1;
+		}
+		else if (!ile_na_skrz && (X4 && X8) && !cars[3] && !cars[7])
+		{
+			stan = 9; tim = T_standard; tim2 = T_nextcar; cars[3] = 1; cars[7] = 1;
+		}
+		else if (!ile_na_skrz && X1 && !cars[0]) { stan = 2; tim = T_standard; tim2 = T_nextcar; cars[0] = 1; }
+		else if (!ile_na_skrz && X2 && !cars[1]) { stan = 3; tim = T_standard; tim2 = T_nextcar; cars[1] = 1; }
+		else if (!ile_na_skrz && X3 && !cars[2]) { stan = 5; tim = T_standard; tim2 = T_nextcar; cars[2] = 1; }
+		else if (!ile_na_skrz && X4 && !cars[3]) { stan = 6; tim = T_standard; tim2 = T_nextcar; cars[3] = 1; }
+		else if (!ile_na_skrz && X5 && !cars[4]) { stan = 2; tim = T_standard; tim2 = T_nextcar; cars[4] = 1; }
+		else if (!ile_na_skrz && X6 && !cars[5]) { stan = 4; tim = T_standard; tim2 = T_nextcar; cars[5] = 1; }
+		else if (!ile_na_skrz && X7 && !cars[6]) { stan = 5; tim = T_standard; tim2 = T_nextcar; cars[6] = 1; }
+		else if (!ile_na_skrz && X8 && !cars[7]) { stan = 6; tim = T_standard; tim2 = T_nextcar; cars[7] = 1; }
+		else if (!ile_na_skrz) { stan = 1; for (int i = 0; i < 8; i++) cars[i] = 0; }
+		break;
+	}
+	if (tim) --tim;
+	if (tim2)--tim2;
+}
+void Set_Sensor()
+{
+	//sprawdzanie stanow na czujnikach
+	pX1 = aX1; aX1 = X1;
+	pX2 = aX2; aX2 = X2;
+	pX3 = aX3; aX3 = X3;
+	pX4 = aX4; aX4 = X4;
+	pX5 = aX5; aX5 = X5;
+	pX6 = aX6; aX6 = X6;
+	pX7 = aX7; aX7 = X7;
+	pX8 = aX8; aX8 = X8;
+	pX9 = aX9; aX9 = X9;
+	pX10 = aX10; aX10 = X10;
+	pX11 = aX11; aX11 = X11;
+	pX12 = aX12; aX12 = X12;
+	pX13 = aX13; aX13 = X13;
+	pX14 = aX14; aX14 = X14;
+	pX15 = aX15; aX15 = X15;
+	pX16 = aX16; aX16 = X16;
+}
+void Auto_Counting()
+{
+	if (pX1 == 1 && aX1 == 0)
+	{
+		ile_na_skrz++;
+	}
+	if (pX5 == 1 && aX5 == 0)
+	{
+		ile_na_skrz++;
+	}
+	if (pX3 == 1 && aX3 == 0)
+	{
+		ile_na_skrz++;
+	}
+	if (pX7 == 1 && aX7 == 0)
+	{
+		ile_na_skrz++;
+	}
+	if (pX2 == 1 && aX2 == 0)
+	{
+		ile_na_skrz++;
+	}
+	if (pX6 == 1 && aX6 == 0)
+	{
+		ile_na_skrz++;
+	}
+	if (pX4 == 1 && aX4 == 0)
+	{
+		ile_na_skrz++;
+	}
+	if (pX8 == 1 && aX8 == 0)
+	{
+		ile_na_skrz++;
+	}
+	if (pX12 == 1 && aX12 == 0) ile_na_skrz--;
+	if (pX10 == 1 && aX10 == 0) ile_na_skrz--;
+	if (pX11 == 1 && aX11 == 0) ile_na_skrz--;
+	if (pX9 == 1 && aX9 == 0) ile_na_skrz--;
+}
+
 
 
 void oblicz(void)					// Kod u¿ytkownika - wykonywany co wCykl [ms]
 {
 	//AutoDriveOptionOne();
 	//AutoDriveOptionTwo();
-	AutoDriveOptionFast();
-	sprintf(buf, "Stan=%d tim=%d", (int)stan, (int)tim, (int)i, (int)j);
+	//AutoDriveOptionFast();
+	AutoAdaptiveOptionCounting();
+	sprintf(buf, "Stan=%d tim=%d", (int)stan, (int)tim2, (int)i, (int)j);
 	LCD_xy(1, 1); LCD_puts(buf);
-	sprintf(buf, " i=%d, j=%d, k=%d", (int)i, (int)j, (int)k);
+	sprintf(buf, " i=%d, j=%d, k=%d", (int)ile_na_skrz, (int)j, (int)k);
 	LCD_xy(1, 2); LCD_puts(buf);
 }
 
@@ -194,76 +493,4 @@ void int_T0(void)					// Przerwanie od T0/T1/T2 wywo³ywane tIntr [ms]
 
 void WykresyPC()					// Opisy/wartoœci wykresów i zmiennych pomocniczych
 {
-}
-
-void test_old()
-{
-	switch (stan) {
-	case 1: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
-		if ((!X5 && !X6) || (!X2 && !X1)) { tim = 50; stan = 15; }
-		else if (!X1 && !X5) { tim = 50; stan = 4; }
-		else if (X1 || X5) { tim = 50; stan = 2; }
-		break;
-	case 2: Z1 = 1; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 1; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (!tim) { tim = 50; stan = 3; }
-		else if (X13 || X14) { tim = 100; stan = 13; }
-		break;
-	case 3: Z1 = 0; Z2 = 2; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (!tim) { tim = 70; stan = 4; }
-		break;
-	case 4: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (X2 || X6) { tim = 50; stan = 5; }
-		else if (!X2 && !X6) { tim = 50; stan = 7; }
-		break;
-	case 5: Z1 = 0; Z2 = 1; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 1; Z7 = 0; Z8 = 0;
-		if (!tim) { tim = 50; stan = 6; }
-		else if (X15 || X16) { tim = 100; stan = 14; }
-		break;
-	case 6: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (!tim) { tim = 70; stan = 7; }
-		break;
-	case 7: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (X3 || X2) { tim = 50; stan = 8; }
-		else if (!X3 && !X2) { tim = 50; stan = 10; }
-		break;
-	case 8: Z1 = 0; Z2 = 0; Z3 = 1; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 1; Z8 = 0;
-		if (!tim) { tim = 50; stan = 9; }
-		break;
-	case 9:  Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (!tim) { tim = 70; stan = 10; }
-		break;
-	case 10: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (X4 || X8) { tim = 50; stan = 11; }
-		else if (!X4 && !X8) { tim = 50; stan = 1; }
-		break;
-	case 11: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 1; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 1;
-		if (!tim) { tim = 50; stan = 12; }
-		break;
-	case 12:  Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (!tim) { tim = 70; stan = 1; }
-		break;
-	case 13: Z1 = 1; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 1; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (!tim) { tim = 50; stan = 3; }
-		break;
-	case 14: Z1 = 0; Z2 = 1; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 1; Z7 = 0; Z8 = 0;
-		if (!tim) { tim = 50; stan = 6; }
-		break;
-	case  15: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (!X5 && !X6) { tim = 50; stan = 16; }
-		else if (!X1 && !X2) { tim = 50; stan = 18; }
-		break;
-	case 16: Z1 = 1; Z2 = 1; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (!tim) { tim = 50; stan = 17; }
-		break;
-	case 17: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (!tim) { tim = 70; stan = 18; }
-		break;
-	case 18: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 0; Z6 = 0; Z7 = 0; Z8 = 0;
-		if (X5 || X6) { tim = 50; stan = 19; }
-		else if (!X5 && !X6) { tim = 50; stan = 6; }
-		break;
-	case 19: Z1 = 0; Z2 = 0; Z3 = 0; Z4 = 0; Z5 = 1; Z6 = 1; Z7 = 0; Z8 = 0;
-		if (!tim) { tim = 70; stan = 6; }
-		break;
-	}if (tim) --tim;
 }
