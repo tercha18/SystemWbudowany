@@ -43,8 +43,8 @@ void KEY_read(void)
 }
 void KEY_mem(void)						// Zapamiêtanie stanu klawiszy
 {
-	pK1=aK1; pK2=aK2; pK3=aK3; pK4=aK4;
-	pK5=aK5; pK6=aK6; pK7=aK7; pK8=aK8;
+	pK1 = aK1; pK2 = aK2; pK3 = aK3; pK4 = aK4;
+	pK5 = aK5; pK6 = aK6; pK7 = aK7; pK8 = aK8;
 }
 void LED_set(void)
 {}
